@@ -7,8 +7,12 @@ if __name__ == "__main__":
     sheet_id, sheet_range = st2.get_spreadsheet_id()
     values = st2.read_google_sheet(creds,sheet_id, sheet_range)
     vehicles=[]
+    is_not_header_row=False
     for row in values:
-        vehicles.append(row[1])
+        if is_not_header_row:
+            vehicles.append(row[1])
+        else:
+            is_not_header_row = True
     runs,races = st2.calc_race_and_runs(len(values)-1)
     #runs = int(input("How many runs would you like to do? "))
     print(values)
@@ -19,10 +23,10 @@ if __name__ == "__main__":
             new_range = st2.race_range(sheet_range,run,race)
             os.system("clear")
             print("Run "+str(run+1)+" Race "+str(race+1))
-            print("LANE 1: "+vehicles[race])
-            print("LANE 2: "+vehicles[race+1])
-            print("LANE 3: "+vehicles[race+2])
-            print("LANE 4: "+vehicles[race+3])
+            print("LANE 1: "+vehicles[4*race])
+            print("LANE 2: "+vehicles[4*race+1])
+            print("LANE 3: "+vehicles[4*race+2])
+            print("LANE 4: "+vehicles[4*race+3])
             results = {}
             line = ser.readline()
             str_line = line.decode("utf-8")
@@ -43,7 +47,9 @@ if __name__ == "__main__":
                 race_results.append([vehicles[4*race+car_int-1],results[car]])
             print(race_results)
             #Increase sheet_range by 1 column
-            
+            print("Make any adjustments in Google Sheet and then....")
+            cont=input("Press return to continue")
             st2.update_google_sheet(creds,sheet_id,new_range,race_results)
+        vehicles = st2.sort_vehicles(vehicles=vehicles,run=run,sheet_id=sheet_id,sheet_range=sheet_range,creds=creds)
     print("Race Over")
 

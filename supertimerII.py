@@ -50,8 +50,12 @@ def race_range(sheet_range,run,race):
     # Convert the new end column index back to letter
     new_end_col = chr(new_end_col_idx + 64)
     new_start_col = chr(new_start_col_idx + 64)
-    start_idx=str(4*race+1)
-    end_idx=str(4*race+4)
+    if race >= 0:
+        start_idx=str(4*race+1)
+        end_idx=str(4*race+4)
+    else:
+        start_idx=""
+        end_idx=""
 
     # Construct the new range string
     new_range_str = f"{new_start_col}{start_idx}:{new_end_col}{end_idx}"
@@ -59,6 +63,37 @@ def race_range(sheet_range,run,race):
     # Combine the sheet name and new range to get the updated range string
     updated_range = f"{sheet_name}!{new_range_str}"
     return updated_range
+
+def sort_vehicles(**kwargs):
+    if kwargs.get("vehicles") == None:
+        print("Function requires vehicle argument")
+        return None
+    elif kwargs.get("run") == None:
+        print("Function requires run")
+        return None
+    
+    run = kwargs.get("run")
+    sheet_id = kwargs.get("sheet_id")
+    sheet_range = kwargs.get("sheet_range")
+    #Grab the race results and use them to sort a new vehicle list
+    last_race_range = race_range(sheet_range,run,-1)
+    print("READING RACE RESULTS")
+    print("SheetID ",sheet_id)
+    print("Race Range ",last_race_range)
+    values = read_google_sheet(kwargs.get("creds"),sheet_id, last_race_range)
+    print("Values\n",values)
+    scores={}
+    not_first_row=False
+    for row in values:
+        if not_first_row:
+            scores[row[0]]=int(row[1])
+        else:
+            not_first_row=True
+    sorted_scores = dict(sorted(scores.items(), key=lambda item:item[1]))
+    vehicles=[]
+    for car in sorted_scores:
+        vehicles.append(car)
+    return vehicles
 
 
 def read_google_sheet(creds,sheet_id, sheet_range):
