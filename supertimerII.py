@@ -7,7 +7,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 def get_spreadsheet_id():
     #ask user form input to provide ID of spreadsheet
@@ -35,10 +35,35 @@ def get_google_credentials():
             token.write(creds.to_json())
     return creds
 
-def read_google_sheet(creds):
+def race_range(sheet_range,run,race):
+    # Split the range into sheet name and range
+    sheet_name, range_str = sheet_range.split("!")
+
+    # Get the column indexes
+    start_col, end_col = range_str.split(":")
+    end_col_idx = ord(end_col) - 64  # Convert the column letter to index
+
+    # Increase the end column index by 1
+    new_start_col_idx = end_col_idx + (2*run+1)
+    new_end_col_idx = end_col_idx + (2*run+2)
+
+    # Convert the new end column index back to letter
+    new_end_col = chr(new_end_col_idx + 64)
+    new_start_col = chr(new_start_col_idx + 64)
+    start_idx=str(4*race+1)
+    end_idx=str(4*race+4)
+
+    # Construct the new range string
+    new_range_str = f"{new_start_col}{start_idx}:{new_end_col}{end_idx}"
+
+    # Combine the sheet name and new range to get the updated range string
+    updated_range = f"{sheet_name}!{new_range_str}"
+    return updated_range
+
+
+def read_google_sheet(creds,sheet_id, sheet_range):
     try:
         service = build('sheets', 'v4', credentials=creds)
-        sheet_id, sheet_range = get_spreadsheet_id()
         # Call the Sheets API
         sheet = service.spreadsheets()
         result = sheet.values().get(spreadsheetId=sheet_id,
@@ -54,6 +79,19 @@ def read_google_sheet(creds):
         print(err)
         return None
 
+def update_google_sheet(creds,spreadsheet_id, sheet_range, values):
+    try:
+        service = build('sheets', 'v4', credentials=creds)
+        body = {
+            'values': values
+        }
+        result = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=sheet_range, valueInputOption="USER_ENTERED", body=body).execute()
+        print(f"{result.get('updatedCells')} cells updated.")
+        return result
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        return error
+
 RaceIsOn = False
 
 def start_race():
@@ -68,7 +106,11 @@ def stop_race():
     RaceIsOn = False
     print("Race has stopped")
 
-def run_race():
+def connect_to_track():
+    ser = serial.Serial('/dev/tty.usbserial-10')
+    return ser
+
+def run_race(creds,cars,runs,spreadsheet_id):
     global RaceIsOn
     ser = serial.Serial('/dev/tty.usbserial-10')
     while RaceIsOn: 
@@ -78,8 +120,9 @@ def run_race():
 
 def calc_race_and_runs(number_of_cars):
     lanes = 4
-    #Find the exponent from an exponential value with a base of 4
+    runs = math.floor(math.log(number_of_cars))
+    races = math.ceil(number_of_cars/lanes)
     print("Based on the number of cars registered...")
-    print("You should run "+str(math.floor(math.log(number_of_cars)))+" times and")
-    print("each run will need "+str(math.ceil(number_of_cars/lanes))+" races")
-    
+    print("You should run "+str(runs)+" times and")
+    print("each run will need "+str(races)+" races")
+    return runs,races
