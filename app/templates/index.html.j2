@@ -1,0 +1,56 @@
+{% extends "_layout.html.j2" %}
+{% block body %}
+
+  <div class="container">
+    <h1><right></right> <center>1st Bow Valley Rally...</center></h1>
+ </div>
+<hr>
+ <div class="container ">
+  <div class="row align-items-center">
+    <div class="col">
+      <h2>On Track</h2>
+    </div>
+    <div class="col">
+      <h2>Up Next</h2>
+    </div>
+  </div>
+
+  <div class="row align-items-center">
+    <div class="col">
+      <h3>Lane #1: {{racedata.get("current").get("1")}}</h3>
+    </div>
+    <div class="col">
+      <h3>Lane #1:{{racedata.get("next").get("1")}}</h3>
+    </div>
+  </div>
+
+  <div class="row align-items-center">
+    <div class="col">
+      <h3>Lane #2: {{racedata.get("current").get("2")}}</h3>
+    </div>
+    <div class="col">
+      <h3>Lane #2: {{racedata.get("next").get("2")}}</h3>
+    </div>
+  </div>
+
+  <div class="row align-items-center">
+    <div class="col">
+      <h3>Lane #3: {{racedata.get("current").get("3")}}</h3>
+    </div>
+    <div class="col">
+      <h3>Lane #3: {{racedata.get("next").get("3")}}</h3>
+    </div>
+  </div>
+
+  <div class="row align-items-center">
+    <div class="col">
+      <h3>Lane #4: {{racedata.get("current").get("4")}}</h3>
+    </div>
+    <div class="col">
+      <h3>Lane #4: {{racedata.get("next").get("4")}}</h3>
+    </div>
+  </div>
+  
+</div>
+
+{% endblock %}

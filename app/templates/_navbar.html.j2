@@ -1,0 +1,71 @@
+<script src="{{ url_for('static', filename='submenu.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='submenu.css') }}">
+
+
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{url_for('login')}}">FLASK-Template</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        {% if not logout and not noauth %}
+          {% for m in menu %}
+            {% if "dropdown" in menu[m] %}
+              {% if m == "PROFILE" %}<img src="{{ profile['avatar'] }}" class="avatar">{% endif %}
+              <li class="nav-item dropdown" id="{{m}}" {% if m == "PROFILE" %}active{% endif %}>
+                <a class="nav-link dropdown-toggle" {% if "href" in menu[m] %} href="{{menu[m]['href']}}" {% else %} href="" {% endif %} id="dropdown{{loop.index}}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if "feather" in menu[m] %}{{ feather.icon(menu[m]['feather'], width=16) }} {% endif %}{% if m == "PROFILE" %}{{profile['user_name']}}{% else %}{{m}}{% endif %}</a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdown{{loop.index}}">
+                    {% for sub_m in menu[m]['dropdown'] %}
+                      {% if "role" in menu[m]['dropdown'][sub_m] %}
+                        {% for role in menu[m]['dropdown'][sub_m]['role'] %}
+                          {% if role in profile['role'] %}
+                            <li><a class="dropdown-item" href={% if "href" in menu[m]['dropdown'][sub_m] %} "{{menu[m]['dropdown'][sub_m]['href']}}" {% else %} "#" {% endif %} {% if "target" in menu[m]['dropdown'][sub_m]%} target="{{menu[m]['dropdown'][sub_m]['target']}}" {%endif%}{% if "loading" in menu[m]['dropdown'][sub_m] %}onclick="$('#loading').show();"{%endif%}> {% if "feather" in menu[m]['dropdown'][sub_m] %} {{ feather.icon(menu[m]['dropdown'][sub_m]['feather'], width=16) }} {% endif %} {{sub_m}}</a>
+                              {%if "submenu" in menu[m]['dropdown'][sub_m] %}
+                                <ul class="submenu dropdown-menu">
+                                {% for susub_m in menu[m]['dropdown'][sub_m]["submenu"] %}
+                                  <li><a class="dropdown-item" href="#">{% if "feather" in menu[m]['dropdown'][sub_m]['submenu'][subsub_m] %}{{ feather.icon(menu[m]['dropdown'][sub_m]['submenu'][subsub_m]['feather'], width=16) }} {% endif %}{{subsub_m}}</a></li>
+                                {% endfor %}
+                              </ul>
+                              {% endif %}
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                      {% else %}
+                        <li><a class="dropdown-item" href={% if "href" in menu[m]['dropdown'][sub_m] %} "{{menu[m]['dropdown'][sub_m]['href']}}" {% else %} "#" {% endif %} {% if "loading" in menu[m]['dropdown'][sub_m] %}onclick="$('#loading').show();"{%endif%}> {% if "feather" in menu[m]['dropdown'][sub_m] %} {{ feather.icon(menu[m]['dropdown'][sub_m]['feather'], width=16) }} {% endif %} {{sub_m}}</a>
+                          {%if "submenu" in menu[m]['dropdown'][sub_m] %}
+                            <ul class="submenu dropdown-menu">
+                            {% for subsub_m in menu[m]['dropdown'][sub_m]["submenu"] %}
+                              <li><a class="dropdown-item" href="#" >{% if "feather" in menu[m]['dropdown'][sub_m]['submenu'][subsub_m] %}{{ feather.icon(menu[m]['dropdown'][sub_m]['submenu'][subsub_m]['feather'], width=16) }} {% endif %}{{subsub_m}}</a></li>
+                            {% endfor %}
+                          </ul>
+                          {% endif %}
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" {% if "href" in menu[m] %} href="{{menu[m]['href']}}" {% else %} href="#" {% endif %}>{% if "feather" in menu[m] %}{{ feather.icon(menu[m]['feather'], width=16) }} {% endif %}{{m}}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <li class="nav-item active">
+            <a class="nav-link" href="/"><font color="yellow">{{ feather.icon('log-in', width=16) }} Login<span class="sr-only">(current)</span></font></a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js">
+
+</script>
+<script>window.jQuery || document.write('<script src="/static/js/jquery-slim.min.js"><\/script>')</script>
