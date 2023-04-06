@@ -24,9 +24,12 @@ if __name__ == "__main__":
             os.system("clear")
             print("Run "+str(run+1)+" Race "+str(race+1))
             print("LANE 1: "+vehicles[4*race])
-            print("LANE 2: "+vehicles[4*race+1])
-            print("LANE 3: "+vehicles[4*race+2])
-            print("LANE 4: "+vehicles[4*race+3])
+            if 4*race+1 < len(vehicles):
+                print("LANE 2: "+vehicles[4*race+1])
+            if 4*race+2<len(vehicles):
+                print("LANE 3: "+vehicles[4*race+2])
+            if 4*race+3<len(vehicles):
+                print("LANE 4: "+vehicles[4*race+3])
             results = {}
             line = ser.readline()
             str_line = line.decode("utf-8")
