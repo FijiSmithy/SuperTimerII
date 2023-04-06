@@ -30,13 +30,13 @@ def get_session():
 #==========================================================
 @app.route('/', methods=['GET' , 'POST'])
 def index():
-    print("RAce Data: ",app.stats)
-    return render_template('index.html.j2', racedata=app.stats)
+    print("Race Data: ",stats)
+    return render_template('index.html.j2', racedata=stats)
 
 @app.route('/update_race',methods=['POST'])
 def update_race():
-    app.stats = request.json
-    print(app.stats)
+    stats = request.json
+    print(stats)
     return make_response('Success',200,{'Status':'Stats Updated'})
 
 
