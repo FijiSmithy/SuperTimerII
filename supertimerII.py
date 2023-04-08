@@ -1,4 +1,4 @@
-import serial,math
+import serial,math,requests
 import os.path
 
 from google.auth.transport.requests import Request
@@ -11,6 +11,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 def get_spreadsheet_id():
     #ask user form input to provide ID of spreadsheet
+    return "1aU_FeQ5vXvhdkVY4Yhm8OXZPIzVA6VONYIU4QHy3cFU", "Car List!A:D"
     spreadsheet_id = input("What is the id of the spreadsheet: ")
     sheet_range = input("What is the range of the sheet to read: ")
     return spreadsheet_id,sheet_range
@@ -161,3 +162,12 @@ def calc_race_and_runs(number_of_cars):
     print("You should run "+str(runs)+" times and")
     print("each run will need "+str(races)+" races")
     return runs,races
+
+def post_stats(stats):
+    url = "https://localhost/"
+    headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    }
+    response = requests.post(url+'update_race',headers=headers, json=stats, verify=False)
+    print(response.status_code)
