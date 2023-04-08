@@ -22,14 +22,17 @@ if __name__ == "__main__":
         for race in range(races):
             new_range = st2.race_range(sheet_range,run,race)
             os.system("clear")
+            stats ={"current":{},"next":{}}
             print("Run "+str(run+1)+" Race "+str(race+1))
-            print("LANE 1: "+vehicles[4*race])
-            if 4*race+1 < len(vehicles):
-                print("LANE 2: "+vehicles[4*race+1])
-            if 4*race+2<len(vehicles):
-                print("LANE 3: "+vehicles[4*race+2])
-            if 4*race+3<len(vehicles):
-                print("LANE 4: "+vehicles[4*race+3])
+            for i in range(0,7):
+                if i < 4:
+                    if 4*race+i < len(vehicles):
+                        print("LANE "+str(int(i+1))+": "+vehicles[4*race+i])
+                        stats["current"][str(int(i+1))]=vehicles[4*race+i]
+                else:
+                    if 4*race+i < len(vehicles):
+                        stats["next"][str(int(i-3))]=vehicles[4*race+i]
+            st2.post_stats(stats)           
             results = {}
             line = ser.readline()
             str_line = line.decode("utf-8")
