@@ -1,7 +1,8 @@
 from flask import flash, render_template, session, redirect, url_for, request, make_response
 
-from app import app, stats
+from app import app
 
+stats={"current":{},"next":{}}
 
 
 def clear_session():
@@ -30,13 +31,15 @@ def get_session():
 #==========================================================
 @app.route('/', methods=['GET' , 'POST'])
 def index():
+    global stats
     print("Race Data: ",stats)
     return render_template('index.html.j2', racedata=stats)
 
 @app.route('/update_race',methods=['POST'])
 def update_race():
+    global stats
     stats = request.json
-    print(stats)
+    print("New Race Data: ",stats)
     return make_response('Success',200,{'Status':'Stats Updated'})
 
 

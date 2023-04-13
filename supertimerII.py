@@ -9,11 +9,13 @@ from googleapiclient.errors import HttpError
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-def get_spreadsheet_id():
+def get_spreadsheet_id(spreadsheet_id=None,sheet_range=None):
     #ask user form input to provide ID of spreadsheet
-    return "1aU_FeQ5vXvhdkVY4Yhm8OXZPIzVA6VONYIU4QHy3cFU", "Car List!A:D"
-    spreadsheet_id = input("What is the id of the spreadsheet: ")
-    sheet_range = input("What is the range of the sheet to read: ")
+    #return "1aU_FeQ5vXvhdkVY4Yhm8OXZPIzVA6VONYIU4QHy3cFU", "Car List!A:D"
+    if spreadsheet_id == None:
+        spreadsheet_id = input("What is the id of the spreadsheet: ")
+    if sheet_range == None:
+        sheet_range = input("What is the range of the sheet to read: ")
     return spreadsheet_id,sheet_range
 
 def get_google_credentials():
@@ -66,13 +68,9 @@ def race_range(sheet_range,run,race):
     return updated_range
 
 def sort_vehicles(**kwargs):
-    if kwargs.get("vehicles") == None:
-        print("Function requires vehicle argument")
-        return None
-    elif kwargs.get("run") == None:
+    if kwargs.get("run") == None:
         print("Function requires run")
         return None
-    
     run = kwargs.get("run")
     sheet_id = kwargs.get("sheet_id")
     sheet_range = kwargs.get("sheet_range")
@@ -84,7 +82,7 @@ def sort_vehicles(**kwargs):
     values = read_google_sheet(kwargs.get("creds"),sheet_id, last_race_range)
     print("Values\n",values)
     scores={}
-    not_first_row=False
+    not_first_row=kwargs.get("header")
     for row in values:
         if not_first_row:
             scores[row[0]]=int(row[1])
@@ -94,6 +92,7 @@ def sort_vehicles(**kwargs):
     vehicles=[]
     for car in sorted_scores:
         vehicles.append(car)
+    print("Run 2 ready: ",len(vehicles))
     return vehicles
 
 
@@ -164,6 +163,8 @@ def calc_race_and_runs(number_of_cars):
     return runs,races
 
 def post_stats(stats):
+    print("POSTING STATS: ")
+    print(stats)
     url = "https://localhost/"
     headers = {
     'Accept': 'application/json',
@@ -171,3 +172,21 @@ def post_stats(stats):
     }
     response = requests.post(url+'update_race',headers=headers, json=stats, verify=False)
     print(response.status_code)
+
+
+if __name__ == "__main__":
+   # post_stats({"current":{"1":"Gamma","2":"Delta"},"next":{}})
+    #quit()
+    ser = serial.Serial('/dev/tty.usbserial-10')
+    while True:
+        line = ser.readline()
+        str_line = line.decode("utf-8")
+        while "!" in str_line:
+            print("Waiting for results")
+            line = ser.readline()
+            str_line = line.decode("utf-8")
+        print(str_line)
+        
+
+
+        #str_line = str_line.replace("\r","").replace("\n","").replace(" ","")

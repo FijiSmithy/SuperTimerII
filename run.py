@@ -10,7 +10,7 @@ if __name__ == "__main__":
     if n > 2:
         if sys.argv[2] == "ssl":
             print("Running in SSL")
-            app.run(host='0.0.0.0', port=portn , debug=False, ssl_context='adhoc')
+            app.run(host='0.0.0.0', port=portn , debug=True, ssl_context='adhoc')
         else:
             app.run(host='0.0.0.0', port=portn , debug=True)
     else:

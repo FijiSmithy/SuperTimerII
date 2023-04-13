@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = 'Th!$I$Th3K3y4Th3I@C@ppl!c@t!0n'
 feather = Feather(app)
 
-stats={"current":{},"next":{}}
+
 
 from app import routes
 
